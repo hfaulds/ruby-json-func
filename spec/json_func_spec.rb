@@ -8,7 +8,7 @@ describe JsonFunc do
   subject { JsonFunc.new(func_handler) }
 
   before do
-    func_handler.stub(public_methods: ['first', 'second'])
+    func_handler.stub(public_methods: [:first, :second])
   end
 
   it 'executes functions with string arguments' do
