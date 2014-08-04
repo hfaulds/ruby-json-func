@@ -1,11 +1,11 @@
 require 'json'
 
 class JsonFunc
-  class BadRootObject < RuntimeError; end;
-  class MultipleFunctionsError < RuntimeError; end;
   class ZeroFunctionsError < RuntimeError; end;
   class BadFunctionNameError < RuntimeError; end;
   attr_reader(:handler)
+
+  class Function < Array; end;
 
   def initialize(handler)
     @handler = handler
@@ -13,31 +13,30 @@ class JsonFunc
 
   def execute(json)
     initial_argument = JSON.parse(json)
-    raise BadRootObject unless initial_argument.is_a? Hash
-    execute_hash(initial_argument)
+    parse_arg(initial_argument)
   end
 
-  def execute_hash(hash)
-    raise MultipleFunctionsError.new(hash.keys) if hash.size > 1
+  def execute_fuction(hash)
     raise ZeroFunctionsError.new(hash.keys) if hash.size == 0
-    func = hash.keys.first
+    func = hash.first
     raise BadFunctionNameError.new(func) unless valid_function?(func)
-    arg = hash.values.first
-    handler.send(func, *parse_arg(arg))
+    args = hash[1..-1].map do |arg|
+      parse_arg(arg)
+    end
+    return args if func == 'list'
+    handler.send(func, *args)
   end
 
   def valid_function?(func)
-    (handler.public_methods - Object.new.public_methods).map(&:to_s).include? func
+    (handler.public_methods - Object.new.public_methods + ['list']).map(&:to_s).include? func
   end
 
   def parse_arg(arg)
     case arg
-    when Hash
-      execute_hash(arg)
     when Array
-      arg
+      execute_fuction(arg)
     else
-      [arg]
+      arg
     end
   end
 end
