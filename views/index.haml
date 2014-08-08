@@ -42,7 +42,7 @@
           var new_values = [];
           _.each(arg.keys, function(key, index) {
             if(_.identity(key)) {
-              new_values.push(arg.values[index]);
+              new_values.push(arg.values[index] || "");
             }
           });
           arg.keys = _.compact(arg.keys).concat(['']);
