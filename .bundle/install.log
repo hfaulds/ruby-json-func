@@ -1,0 +1,13 @@
+# Logfile created on 2014-08-07 21:10:00 +0100 by logger.rb/44203
+I, [2014-08-07T21:10:00.376874 #8346]  INFO -- : 0:  diff-lcs (1.2.5) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/diff-lcs-1.2.5.gemspec
+I, [2014-08-07T21:10:00.378639 #8346]  INFO -- : 0:  tilt (1.4.1) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/tilt-1.4.1.gemspec
+I, [2014-08-07T21:10:00.379169 #8346]  INFO -- : 0:  haml (4.0.5) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/haml-4.0.5.gemspec
+I, [2014-08-07T21:10:00.379627 #8346]  INFO -- : 0:  rack (1.5.2) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rack-1.5.2.gemspec
+I, [2014-08-07T21:10:00.380069 #8346]  INFO -- : 0:  rack-protection (1.5.3) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rack-protection-1.5.3.gemspec
+I, [2014-08-07T21:10:01.459699 #8346]  INFO -- : 0:  rspec-support (3.0.3) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rspec-support-3.0.3.gemspec
+I, [2014-08-07T21:10:02.021922 #8346]  INFO -- : 0:  rspec-core (3.0.3) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rspec-core-3.0.3.gemspec
+I, [2014-08-07T21:10:02.708404 #8346]  INFO -- : 0:  rspec-expectations (3.0.3) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rspec-expectations-3.0.3.gemspec
+I, [2014-08-07T21:10:03.210596 #8346]  INFO -- : 0:  rspec-mocks (3.0.3) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rspec-mocks-3.0.3.gemspec
+I, [2014-08-07T21:10:03.874637 #8346]  INFO -- : 0:  rspec (3.0.0) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/rspec-3.0.0.gemspec
+I, [2014-08-07T21:10:03.875103 #8346]  INFO -- : 0:  sinatra (1.4.5) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@estately/specifications/sinatra-1.4.5.gemspec
+I, [2014-08-07T21:10:03.875414 #8346]  INFO -- : 0:  bundler (1.5.1) from /Users/fauldsh/.rvm/gems/ruby-2.1.0@global/specifications/bundler-1.5.1.gemspec

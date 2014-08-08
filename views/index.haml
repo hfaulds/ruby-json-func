@@ -1,0 +1,50 @@
+%html
+  %head
+    %script{src: 'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js' }
+    %script{src: 'http://code.jquery.com/jquery-2.1.0.min.js' }
+    %script{src: 'http://underscorejs.org/underscore-min.js' }
+    %link{href: "http://ivaynberg.github.io/select2/select2-3.5.1/select2.css", rel: "stylesheet"}
+    :javascript
+      function ExampleController($scope) {
+        $scope.valid_functions = #{locals[:valid_functions].to_json};
+        $scope.raw_data_columns = #{locals[:raw_data_columns].to_json};
+        $scope.target_columns = #{locals[:target_columns].to_json};
+
+        $scope.json_from_hash = function(func) {
+          if(func && func.args && func.args[0].value) {
+            var blah = _.union([func.name], _.map(func.args, function(arg) {
+              return arg.value;
+            }));
+            return JSON.stringify(blah);
+          }
+        };
+      }
+  %body{'ng-app' => true}
+    %div{'ng-controller' => 'ExampleController'}
+
+      %script{type: "text/ng-template", id: "temp1.html"}
+        %div
+          %select{'ng-options' => "func as func.name for func in valid_functions",
+                  'ng-model' => 'column.func'}
+
+          %div{'ng-repeat' => 'arg in column.func.args'}
+            {{arg.name}}
+            %select.select2{'ng-if' => 'arg.vararg',
+              'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+              'ng-model' => 'arg.value',
+              'multiple' => true}
+
+            %select.select2{'ng-if' => '!arg.vararg',
+              'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+              'ng-model' => 'arg.value'}
+
+      %table
+        %tr{'ng-repeat' => 'column in target_columns'}
+          %td
+            {{column.name}}
+          %td{'ng-include' => '"temp1.html"'}
+          %td
+            {{json_from_hash(column.func)}}
+
+      {{target_columns}}
+

@@ -28,7 +28,11 @@ class JsonFunc
   end
 
   def valid_function?(func)
-    (handler.public_methods - Object.new.public_methods + ['list']).map(&:to_s).include? func
+    valid_function.include? func
+  end
+
+  def valid_functions
+    (handler.public_methods - Object.new.public_methods + ['list']).map(&:to_s)
   end
 
   def parse_arg(arg)
