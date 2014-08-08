@@ -10,41 +10,58 @@
         $scope.raw_data_columns = #{locals[:raw_data_columns].to_json};
         $scope.target_columns = #{locals[:target_columns].to_json};
 
+        $scope.template_for = function(arg_name) {
+          var type = arg_name.split('_')[0];
+          if(type == 'list') {
+            type = 'list_' + arg_name.split('_')[1];
+          }
+          return type + '.html';
+        };
+
         $scope.json_from_hash = function(func) {
-          if(func && func.args && func.args[0].value) {
-            var blah = _.union([func.name], _.map(func.args, function(arg) {
-              return arg.value;
-            }));
-            return JSON.stringify(blah);
+          if(func && func.args) {
+            var arg_values = _.map(func.args, function(arg) {
+              if(arg.name.split('_')[0] == 'list') {
+                return _.union(['list'], arg.values);
+              } else {
+                return arg.value;
+              }
+            })
+            var json = _.union([func.name], arg_values);
+            return JSON.stringify(json);
           }
         };
-      }
+      };
   %body{'ng-app' => true}
     %div{'ng-controller' => 'ExampleController'}
+      %script{type: 'text/ng-template', id: "lookup.html"}
+        %select.select2{'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+          'ng-model' => 'arg.value'}
 
-      %script{type: "text/ng-template", id: "temp1.html"}
-        %div
+      %script{type: 'text/ng-template', id: "list_lookup.html"}
+        %select.select2{'multiple' => 'true',
+          'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+          'ng-model' => 'arg.values'}
+
+      %script{type: "text/ng-template", id: "function.html"}
+        %div{style: "display: inline-block;"}
+          %div
+            Function
           %select{'ng-options' => "func as func.name for func in valid_functions",
                   'ng-model' => 'column.func'}
 
+        %div{style: "display: inline-block;"}
+          %div
+            Arguments
           %div{'ng-repeat' => 'arg in column.func.args'}
             {{arg.name}}
-            %select.select2{'ng-if' => 'arg.vararg',
-              'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
-              'ng-model' => 'arg.value',
-              'multiple' => true}
+            %div{'ng-include' => 'template_for(arg.name)'}
 
-            %select.select2{'ng-if' => '!arg.vararg',
-              'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
-              'ng-model' => 'arg.value'}
 
       %table
-        %tr{'ng-repeat' => 'column in target_columns'}
-          %td
+        %div{'ng-repeat' => 'column in target_columns'}
+          %span
             {{column.name}}
-          %td{'ng-include' => '"temp1.html"'}
-          %td
+          %div{'ng-include' => '"function.html"', style: "display: inline-block;"}
+          %div{style: "display: inline-block;"}
             {{json_from_hash(column.func)}}
-
-      {{target_columns}}
-

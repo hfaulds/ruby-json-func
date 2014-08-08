@@ -2,16 +2,19 @@ require 'sinatra'
 require_relative 'lib/json_func'
 
 class ExmpleHandler
-  def func_with_one_arg(arr_1)
-
+  def acres_to_sq_feet(lookup_field)
   end
 
-  def func_with_two_args(str_1, str_2)
-
+  def address(list_lookup_address_parts)
   end
 
-  def func_with_var_args(*str_args)
+  def publicly_viewable(lookup_status, list_str_statuses)
+  end
 
+  def show_address(lookup_field, hash_show_addres)
+  end
+
+  def fetch_or_notify(lookup_status, hash_statuses, str_default)
   end
 end
 
@@ -22,7 +25,7 @@ get '/' do
     {
       name: func_name,
       args: method.parameters.map { |arg|
-        { name: arg[1], required: arg[0] == :req, vararg: arg[0] == :rest, value: '' }
+        { name: arg[1] }
       }
     }
   }
