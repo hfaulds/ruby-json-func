@@ -21,8 +21,10 @@
         $scope.json_from_hash = function(func) {
           if(func && func.args) {
             var arg_values = _.map(func.args, function(arg) {
-              if(arg.name.split('_')[0] == 'list') {
-                return ['list'].concat(arg.values);
+              if(arg.name.split('_')[0] == 'hash') {
+                return _.object(_.compact(arg.keys), arg.values);
+              } else if(arg.name.split('_')[0] == 'list') {
+                return ['list'].concat(_.compact(arg.values));
               } else {
                 return arg.value;
               }
@@ -35,6 +37,17 @@
         $scope.remove_blanks = function(values) {
           return _.compact(values).concat(['']);
         };
+
+        $scope.remove_blanks_from_hash = function(arg) {
+          var new_values = [];
+          _.each(arg.keys, function(key, index) {
+            if(_.identity(key)) {
+              new_values.push(arg.values[index]);
+            }
+          });
+          arg.keys = _.compact(arg.keys).concat(['']);
+          arg.values = new_values;
+        };
       };
   %body{'ng-app' => true}
     %div{'ng-controller' => 'ExampleController'}
@@ -46,12 +59,12 @@
         %input{ 'ng-model' => 'arg.value' }
 
       %script{type: 'text/ng-template', id: "hash.html"}
-        %div{"ng-init" => "arg.value = {}"}
-        %div{'ng-repeat' => 'val in arg.value.keys track by $index'}
-          %input{ 'ng-model' => 'arg.value.keys[$index]' }
-
-        %div{'ng-repeat' => 'val in arg.value.values track by $index'}
-          %input{ 'ng-model' => 'arg.value.values[$index]' }
+        %div{"ng-init" => 'arg.keys = [""]'}
+        %div{"ng-init" => 'arg.values = [""]'}
+        %div{'ng-repeat' => 'key in arg.keys track by $index'}
+          %input{ 'ng-model' => 'arg.keys[$index]',
+                  'ng-change' => 'remove_blanks_from_hash(arg)'}
+          %input{ 'ng-model' => 'arg.values[$index]' }
 
       %script{type: 'text/ng-template', id: "list_str.html"}
         %div{"ng-init" => "arg.values = ['']"}
