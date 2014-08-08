@@ -22,14 +22,18 @@
           if(func && func.args) {
             var arg_values = _.map(func.args, function(arg) {
               if(arg.name.split('_')[0] == 'list') {
-                return _.union(['list'], arg.values);
+                return ['list'].concat(arg.values);
               } else {
                 return arg.value;
               }
             })
-            var json = _.union([func.name], arg_values);
+            var json = [func.name].concat(arg_values);
             return JSON.stringify(json);
           }
+        };
+
+        $scope.remove_blanks = function(values) {
+          return _.compact(values).concat(['']);
         };
       };
   %body{'ng-app' => true}
@@ -37,6 +41,23 @@
       %script{type: 'text/ng-template', id: "lookup.html"}
         %select.select2{'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
           'ng-model' => 'arg.value'}
+
+      %script{type: 'text/ng-template', id: "str.html"}
+        %input{ 'ng-model' => 'arg.value' }
+
+      %script{type: 'text/ng-template', id: "hash.html"}
+        %div{"ng-init" => "arg.value = {}"}
+        %div{'ng-repeat' => 'val in arg.value.keys track by $index'}
+          %input{ 'ng-model' => 'arg.value.keys[$index]' }
+
+        %div{'ng-repeat' => 'val in arg.value.values track by $index'}
+          %input{ 'ng-model' => 'arg.value.values[$index]' }
+
+      %script{type: 'text/ng-template', id: "list_str.html"}
+        %div{"ng-init" => "arg.values = ['']"}
+        %div{'ng-repeat' => 'val in arg.values track by $index'}
+          %input{ 'ng-model' => 'arg.values[$index]',
+                  'ng-change' => 'arg.values = remove_blanks(arg.values)'}
 
       %script{type: 'text/ng-template', id: "list_lookup.html"}
         %select.select2{'multiple' => 'true',

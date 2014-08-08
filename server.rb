@@ -11,7 +11,7 @@ class ExmpleHandler
   def publicly_viewable(lookup_status, list_str_statuses)
   end
 
-  def show_address(lookup_field, hash_show_addres)
+  def show_address(lookup_field, hash_show_address)
   end
 
   def fetch_or_notify(lookup_status, hash_statuses, str_default)
