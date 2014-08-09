@@ -63,15 +63,14 @@
       %script{type: 'text/ng-template', id: "hash.html"}
         %div{"ng-init" => 'arg.keys = [""]'}
         %div{"ng-init" => 'arg.values = [""]'}
-        .row{'ng-repeat' => 'key in arg.keys track by $index'}
-          .form-group.col-lg-5
-            %input.form-control{ 'ng-model' => 'arg.keys[$index]',
-                    'ng-change' => 'remove_blanks_from_hash(arg)'}
-          .col-lg-1
-            %span
-              \:
-          .form-group.col-lg-5
-            %input.form-control{ 'ng-model' => 'arg.values[$index]' }
+        .form-inline.text-center{'ng-repeat' => 'key in arg.keys track by $index'}
+          %input.form-control{ 'ng-model' => 'arg.keys[$index]',
+                               'ng-change' => 'remove_blanks_from_hash(arg)',
+                               'style' => 'width: 45%'}
+          %span
+            \:
+          %input.form-control{ 'ng-model' => 'arg.values[$index]',
+                               'style' => 'width: 45%'}
 
       %script{type: 'text/ng-template', id: "list_str.html"}
         %div{"ng-init" => "arg.values = ['']"}
@@ -85,7 +84,7 @@
           'ng-model' => 'arg.values'}
 
       %script{type: "text/ng-template", id: "function.html"}
-        .col-md-2
+        .col-md-2{ style: "background-color: #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
           %h5 Function
           %select.form-control{'ng-options' => "func as func.name for func in valid_functions",
                   'ng-model' => 'column.func'}
@@ -93,8 +92,8 @@
         .col-md-10
           %h5 Arguments
           .row
-            .col-md-3{'ng-repeat' => 'arg in column.func.args'}
-              {{arg.name}}
+            .col-md-4{'ng-repeat' => 'arg in column.func.args', style: "border: 1px solid #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
+              %strong {{arg.name}}
               %div{'ng-include' => 'template_for(arg.name)'}
 
 
@@ -104,7 +103,8 @@
             {{column.name}}
           .col-md-11
             .row
-              %div{'ng-include' => '"function.html"'}
-            .row
-              .col-md-11
+              .col-md-10
                 %input.form-control{readonly: true, value: '{{json_from_hash(column.func)}}' }
+            .row
+              .col-md-10
+                %div{'ng-include' => '"function.html"'}
