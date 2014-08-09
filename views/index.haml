@@ -1,9 +1,11 @@
+!!!
 %html
   %head
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
     %script{src: 'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js' }
     %script{src: 'http://code.jquery.com/jquery-2.1.0.min.js' }
     %script{src: 'http://underscorejs.org/underscore-min.js' }
-    %link{href: "http://ivaynberg.github.io/select2/select2-3.5.1/select2.css", rel: "stylesheet"}
+    %link{href: "http://getbootstrap.com/dist/css/bootstrap.min.css", rel: "stylesheet"}
     :javascript
       function ExampleController($scope) {
         $scope.valid_functions = #{locals[:valid_functions].to_json};
@@ -52,50 +54,57 @@
   %body{'ng-app' => true}
     %div{'ng-controller' => 'ExampleController'}
       %script{type: 'text/ng-template', id: "lookup.html"}
-        %select.select2{'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
-          'ng-model' => 'arg.value'}
+        %select.form-control{ 'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+                              'ng-model' => 'arg.value'}
 
       %script{type: 'text/ng-template', id: "str.html"}
-        %input{ 'ng-model' => 'arg.value' }
+        %input.form-control{ 'ng-model' => 'arg.value' }
 
       %script{type: 'text/ng-template', id: "hash.html"}
         %div{"ng-init" => 'arg.keys = [""]'}
         %div{"ng-init" => 'arg.values = [""]'}
-        %div{'ng-repeat' => 'key in arg.keys track by $index'}
-          %input{ 'ng-model' => 'arg.keys[$index]',
-                  'ng-change' => 'remove_blanks_from_hash(arg)'}
-          %input{ 'ng-model' => 'arg.values[$index]' }
+        .row{'ng-repeat' => 'key in arg.keys track by $index'}
+          .form-group.col-lg-5
+            %input.form-control{ 'ng-model' => 'arg.keys[$index]',
+                    'ng-change' => 'remove_blanks_from_hash(arg)'}
+          .col-lg-1
+            %span
+              \:
+          .form-group.col-lg-5
+            %input.form-control{ 'ng-model' => 'arg.values[$index]' }
 
       %script{type: 'text/ng-template', id: "list_str.html"}
         %div{"ng-init" => "arg.values = ['']"}
         %div{'ng-repeat' => 'val in arg.values track by $index'}
-          %input{ 'ng-model' => 'arg.values[$index]',
-                  'ng-change' => 'arg.values = remove_blanks(arg.values)'}
+          %input.form-control{ 'ng-model' => 'arg.values[$index]',
+                               'ng-change' => 'arg.values = remove_blanks(arg.values)'}
 
       %script{type: 'text/ng-template', id: "list_lookup.html"}
-        %select.select2{'multiple' => 'true',
+        %select.form-control{'multiple' => 'true',
           'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
           'ng-model' => 'arg.values'}
 
       %script{type: "text/ng-template", id: "function.html"}
-        %div{style: "display: inline-block;"}
-          %div
-            Function
-          %select{'ng-options' => "func as func.name for func in valid_functions",
+        .col-md-2
+          %h5 Function
+          %select.form-control{'ng-options' => "func as func.name for func in valid_functions",
                   'ng-model' => 'column.func'}
 
-        %div{style: "display: inline-block;"}
-          %div
-            Arguments
-          %div{'ng-repeat' => 'arg in column.func.args'}
-            {{arg.name}}
-            %div{'ng-include' => 'template_for(arg.name)'}
+        .col-md-10
+          %h5 Arguments
+          .row
+            .col-md-3{'ng-repeat' => 'arg in column.func.args'}
+              {{arg.name}}
+              %div{'ng-include' => 'template_for(arg.name)'}
 
 
-      %table
-        %div{'ng-repeat' => 'column in target_columns'}
-          %span
+      .container
+        .row{'ng-repeat' => 'column in target_columns'}
+          .col-md-1
             {{column.name}}
-          %div{'ng-include' => '"function.html"', style: "display: inline-block;"}
-          %div{style: "display: inline-block;"}
-            {{json_from_hash(column.func)}}
+          .col-md-11
+            .row
+              %div{'ng-include' => '"function.html"'}
+            .row
+              .col-md-11
+                %input.form-control{readonly: true, value: '{{json_from_hash(column.func)}}' }
