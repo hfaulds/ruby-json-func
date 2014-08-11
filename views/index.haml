@@ -12,6 +12,21 @@
         $scope.raw_data_columns = #{locals[:raw_data_columns].to_json};
         $scope.target_columns = #{locals[:target_columns].to_json};
 
+        $scope.nonRecurrsiveInitArgs = function(arr, func) {
+          func.name = arr[0];
+          _.each(_.rest(arr, 1), function(arg, i) {
+            if(typeof arg === 'object') {
+              func.args[i].keys = _.keys(arg);
+              func.args[i].values = _.values(arg);
+            } else if(arg[0] === 'list') {
+              func.args[i].values = arg;
+            } else {
+              func.args[i].value = arg;
+            }
+          });
+          return func;
+        };
+
         $scope.json_from_hash = function(func) {
           if(func && func.args) {
             var arg_values = _.map(func.args, function(arg) {
@@ -42,6 +57,15 @@
           arg.keys = _.compact(arg.keys).concat(['']);
           arg.values = new_values;
         };
+
+        _.each($scope.target_columns, function(target_column) {
+          target_column.valid_functions = angular.copy($scope.valid_functions);
+          if(target_column.persisted_func) {
+            target_column.selected_func = $scope.nonRecurrsiveInitArgs(target_column.persisted_func,
+              _.findWhere(target_column.valid_functions, {name: target_column.persisted_func[0]})
+            );
+          }
+        });
       };
   %body{'ng-app' => true}
     %div{'ng-controller' => 'ExampleController'}
@@ -53,8 +77,8 @@
         %input.form-control{ 'ng-model' => 'arg.value' }
 
       %script{type: 'text/ng-template', id: "hash.html"}
-        %div{"ng-init" => 'arg.keys = [""]'}
-        %div{"ng-init" => 'arg.values = [""]'}
+        %div{"ng-init" => 'arg.keys = arg.keys || [""]'}
+        %div{"ng-init" => 'arg.values = arg.values || [""]'}
         .form-inline.text-center{'ng-repeat' => 'key in arg.keys track by $index'}
           %input.form-control{ 'ng-model' => 'arg.keys[$index]',
                                'ng-change' => 'remove_blanks_from_hash(arg)',
@@ -65,7 +89,7 @@
                                'style' => 'width: 45%'}
 
       %script{type: 'text/ng-template', id: "list_str.html"}
-        %div{"ng-init" => "arg.values = ['']"}
+        %div{"ng-init" => "arg.values = arg.keys || ['']"}
         %div{'ng-repeat' => 'val in arg.values track by $index'}
           %input.form-control{ 'ng-model' => 'arg.values[$index]',
                                'ng-change' => 'arg.values = remove_blanks(arg.values)'}
@@ -78,18 +102,17 @@
       %script{type: "text/ng-template", id: "function.html"}
         .col-md-2{ style: "background-color: #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
           %h5 Function
-          %select.form-control{'ng-options' => "func as func.name for func in valid_functions",
-                  'ng-model' => 'column.func'}
-          %p {{column.func.description}}
+          %select.form-control{ 'ng-options' => "func as func.name for func in column.valid_functions",
+                                'ng-model' => 'column.selected_func'}
+          %p {{column.selected_func.description}}
 
         .col-md-10
           %h5 Arguments
           .row
-            .col-md-4{'ng-repeat' => 'arg in column.func.args', style: "border: 1px solid #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
+            .col-md-4{'ng-repeat' => 'arg in column.selected_func.args', style: "border: 1px solid #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
               %strong {{arg.name}}
               %p {{arg.description}}
               %div{'ng-include' => 'arg.template'}
-
 
       .container
         .row{'ng-repeat' => 'column in target_columns'}
@@ -98,7 +121,7 @@
           .col-md-11
             .row
               .col-md-10
-                %input.form-control{readonly: true, value: '{{json_from_hash(column.func)}}', style: 'margin: 10px 0px' }
+                %input.form-control{readonly: true, value: '{{json_from_hash(column.selected_func)}}', style: 'margin: 10px 0px' }
             .row
               .col-md-10
                 %div{'ng-include' => '"function.html"'}
