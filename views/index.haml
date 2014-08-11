@@ -12,14 +12,6 @@
         $scope.raw_data_columns = #{locals[:raw_data_columns].to_json};
         $scope.target_columns = #{locals[:target_columns].to_json};
 
-        $scope.template_for = function(arg_name) {
-          var type = arg_name.split('_')[0];
-          if(type == 'list') {
-            type = 'list_' + arg_name.split('_')[1];
-          }
-          return type + '.html';
-        };
-
         $scope.json_from_hash = function(func) {
           if(func && func.args) {
             var arg_values = _.map(func.args, function(arg) {
@@ -88,13 +80,15 @@
           %h5 Function
           %select.form-control{'ng-options' => "func as func.name for func in valid_functions",
                   'ng-model' => 'column.func'}
+          %p {{column.func.description}}
 
         .col-md-10
           %h5 Arguments
           .row
             .col-md-4{'ng-repeat' => 'arg in column.func.args', style: "border: 1px solid #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
               %strong {{arg.name}}
-              %div{'ng-include' => 'template_for(arg.name)'}
+              %p {{arg.description}}
+              %div{'ng-include' => 'arg.template'}
 
 
       .container
@@ -104,7 +98,7 @@
           .col-md-11
             .row
               .col-md-10
-                %input.form-control{readonly: true, value: '{{json_from_hash(column.func)}}' }
+                %input.form-control{readonly: true, value: '{{json_from_hash(column.func)}}', style: 'margin: 10px 0px' }
             .row
               .col-md-10
                 %div{'ng-include' => '"function.html"'}
