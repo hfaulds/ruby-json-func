@@ -110,3 +110,7 @@ get '/' do
     ]
   }
 end
+
+get '/func_template.html' do
+  haml :func_template
+end
