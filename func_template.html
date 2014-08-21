@@ -1,0 +1,17 @@
+<div class='row'>
+  <div class='col-md-2' style='background-color: #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;'>
+    <h5>Function</h5>
+    <select class='form-control' ng-model='selected_func' ng-options='func as func.name for func in valid_functions'></select>
+    <p>{{selected_func.description}}</p>
+  </div>
+  <div class='col-md-10'>
+    <h5>Arguments</h5>
+    <div class='row'>
+      <div class='col-md-4' ng-repeat='arg in selected_func.args' style='border: 1px solid #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;'>
+        <strong>{{arg.name}}</strong>
+        <p>{{arg.description}}</p>
+        <div ng-include='arg.template'></div>
+      </div>
+    </div>
+  </div>
+</div>
