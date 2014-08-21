@@ -2,6 +2,7 @@ angular.module('jsonFunc', [])
   .directive('jsonFuncBuilder', function() {
     return {
       restrict: 'E',
+      templateUrl: 'func_template.html'
       scope: {
         valid_functions: '=',
         column: '@',
@@ -24,8 +25,12 @@ angular.module('jsonFunc', [])
         };
       },
       link: function($scope) {
-        var nonRecurrsiveInitArgs = function(arr, func) {
-          func.name = arr[0];
+        $scope.valid_functions = angular.copy($scope.valid_functions);
+
+        if($scope.column.persisted_func) {
+          var arr = JSON.parse($scope.column.persisted_func);
+          var func = _.findWhere($scope.valid_functions, {name: arr[0]});
+
           _.each(_.rest(arr, 1), function(arg, i) {
             if(typeof arg === 'object') {
               func.args[i].keys = _.keys(arg);
@@ -36,16 +41,9 @@ angular.module('jsonFunc', [])
               func.args[i].value = arg;
             }
           });
-          return func;
-        };
 
-        $scope.column.valid_functions = angular.copy($scope.valid_functions);
-        if($scope.column.persisted_func) {
-          $scope.column.selected_func = nonRecurrsiveInitArgs($scope.column.persisted_func,
-            _.findWhere($scope.column.valid_functions, {name: $scope.column.persisted_func[0]})
-          );
-        }
+          $scope.selected_func = func;
+        };
       },
-      templateUrl: 'func_template.html'
     };
   })

@@ -104,9 +104,9 @@ get '/' do
     valid_functions: valid_functions,
     raw_data_columns: [ 'A', 'B', 'C', 'D' ],
     target_columns: [
-      { name: 1, persisted_func: ['acres_to_sq_feet', 'B'] },
-      { name: 2, persisted_func: ['fetch_or_notify', 'B', {'FOO' => 'A'}, 'A']},
-      {name: 3},{name: 4},{name: 5},{name: 6}
+      { name: 1, persisted_func: '["acres_to_sq_feet", "B"]' },
+      { name: 2, persisted_func: '["fetch_or_notify", "B", {"FOO": "A"}, "A"]'},
+      { name: 3},{name: 4},{name: 5},{name: 6}
     ]
   }
 end
