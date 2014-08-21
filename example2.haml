@@ -1,0 +1,31 @@
+!!!
+%html
+  %head
+    %meta{name: "viewport", content: "width=device-width, initial-scale=1"}
+    %script{src: 'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js' }
+    %script{src: 'http://code.jquery.com/jquery-2.1.0.min.js' }
+    %script{src: 'http://underscorejs.org/underscore-min.js' }
+    %script{src: 'example_controller.js' }
+    %script{src: 'json_func_directive.js' }
+    %link{href: "http://getbootstrap.com/dist/css/bootstrap.min.css", rel: "stylesheet"}
+    :javascript
+      valid_functions = [{"name":"acres_to_sq_feet","description":"Looks up a field, reads the value as acres and converts to sqft","args":[{"name":"lookup_field","description":"A raw data field in acres","template":"lookup.html"}]},{"name":"address","description":"Look up an address based on a list of parts","args":[{"name":"list_lookup_address_parts","description":"A list of raw field address parts in order","template":"list_lookup.html"}]},{"name":"publicly_viewable","description":"Takes a raw field for status and a list of publicly viewable statuses","args":[{"name":"lookup_status","description":"Raw field for status of property","template":"lookup.html"},{"name":"list_str_statuses","description":"A list of statuses that are publicly viewable","template":"list_str.html"}]},{"name":"show_address","description":"Takes a raw field for whether to show the address and a mapping of the possible raw values to either 'Y' or 'G'","args":[{"name":"lookup_field","description":"Raw field for whether to show the address","template":"lookup.html"},{"name":"hash_show_address","description":"A mapping of possible raw values to 'Y' or 'G'","template":"hash.html"}]},{"name":"fetch_or_notify","description":"Takes a raw field for status, a mappings of raw statuses to our statuses and a default value to return if raw gives us a value not in the mapping","args":[{"name":"lookup_status","description":"Raw field for status of property","template":"lookup.html"},{"name":"hash_statuses","description":"A mapping of raw statuses to our statuses","template":"hash.html"},{"name":"str_default","description":"The default status if we cant find the rest statuses in the mapping","template":"str.html"}]}];
+      raw_data_columns = ["A","B","C","D"];
+      target_columns = [{"name":1,"persisted_func":"[\"acres_to_sq_feet\", \"B\"]"},{"name":2,"persisted_func":"[\"fetch_or_notify\", \"B\", {\"FOO\": \"A\"}, \"A\"]"},{"name":3},{"name":4},{"name":5},{"name":6}];
+  %body{'ng-app' => 'exampleApp'}
+    %div{'ng-controller' => 'ExampleController'}
+      = haml :templates
+
+      .container
+        %div{'ng-repeat' => 'column in target_columns'}
+          .row
+            .col-md-1
+              {{column.name}}
+            .col-md-1
+              %button.btn{'ng-click' => 'column_to_edit = (column_to_edit === column ? nil : column)'}
+                edit
+            .col-md-10
+              %input.form-control{readonly: true, value: '{{column.selected_func || column.persisted_func}}'}
+          .row
+            .col-md-offset-2.col-md-10{'ng-if' => 'column_to_edit===column'}
+              %json_func_builder{ 'column' => '{{column}}' }

@@ -1,0 +1,29 @@
+%script{type: 'text/ng-template', id: "lookup.html"}
+  %select.form-control{ 'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+                        'ng-model' => 'arg.value'}
+
+%script{type: 'text/ng-template', id: "str.html"}
+  %input.form-control{ 'ng-model' => 'arg.value' }
+
+%script{type: 'text/ng-template', id: "hash.html"}
+  %div{"ng-init" => 'arg.keys = arg.keys || [""]'}
+  %div{"ng-init" => 'arg.values = arg.values || [""]'}
+  .form-inline.text-center{'ng-repeat' => 'key in arg.keys track by $index'}
+    %input.form-control{ 'ng-model' => 'arg.keys[$index]',
+                         'ng-change' => 'remove_blanks_from_hash(arg)',
+                         'style' => 'width: 45%'}
+    %span
+      \:
+    %input.form-control{ 'ng-model' => 'arg.values[$index]',
+                         'style' => 'width: 45%'}
+
+%script{type: 'text/ng-template', id: "list_str.html"}
+  %div{"ng-init" => "arg.values = arg.keys || ['']"}
+  %div{'ng-repeat' => 'val in arg.values track by $index'}
+    %input.form-control{ 'ng-model' => 'arg.values[$index]',
+                         'ng-change' => 'arg.values = remove_blanks(arg.values)'}
+
+%script{type: 'text/ng-template', id: "list_lookup.html"}
+  %select.form-control{'multiple' => 'true',
+    'ng-options' => "raw_column as raw_column for raw_column in raw_data_columns",
+    'ng-model' => 'arg.values'}
