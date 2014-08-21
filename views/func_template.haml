@@ -1,7 +1,4 @@
 .row
-  .col-md-10
-    %input.form-control{readonly: true, value: '{{json_from_hash(selected_func)}}', style: 'margin: 10px 0px' }
-.row
   .col-md-2{ style: "background-color: #eee; border-radius: 5px; padding-bottom: 20px; margin-bottom: 20px;" }
     %h5 Function
     %select.form-control{ 'ng-options' => "func as func.name for func in valid_functions",

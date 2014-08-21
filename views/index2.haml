@@ -5,10 +5,8 @@
     %script{src: 'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js' }
     %script{src: 'http://code.jquery.com/jquery-2.1.0.min.js' }
     %script{src: 'http://underscorejs.org/underscore-min.js' }
-
     %script{src: 'example_controller.js' }
     %script{src: 'json_func_directive.js' }
-
     %link{href: "http://getbootstrap.com/dist/css/bootstrap.min.css", rel: "stylesheet"}
     :javascript
       valid_functions = #{locals[:valid_functions].to_json};
@@ -19,11 +17,15 @@
       = haml :templates
 
       .container
-        .row{'ng-repeat' => 'column in target_columns'}
-          .col-md-1
-            {{column.name}}
-          .col-md-11
-            .row
-              .col-md-10
-                %input.form-control{readonly: true, value: '{{column.selected_func}}', style: 'margin: 10px 0px' }
-            %json_func_builder{ 'column' => '{{column}}' }
+        %div{'ng-repeat' => 'column in target_columns'}
+          .row
+            .col-md-1
+              {{column.name}}
+            .col-md-1
+              %button.btn{'ng-click' => 'column_to_edit = (column_to_edit === column ? nil : column)'}
+                edit
+            .col-md-10
+              %input.form-control{readonly: true, value: '{{column.selected_func || column.persisted_func}}'}
+          .row
+            .col-md-offset-2.col-md-10{'ng-if' => 'column_to_edit===column'}
+              %json_func_builder{ 'column' => '{{column}}' }

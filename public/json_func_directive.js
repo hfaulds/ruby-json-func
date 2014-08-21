@@ -2,7 +2,7 @@ angular.module('jsonFunc', [])
   .directive('jsonFuncBuilder', function() {
     return {
       restrict: 'E',
-      templateUrl: 'func_template.html'
+      templateUrl: 'func_template.html',
       scope: {
         valid_functions: '=',
         column: '@',
@@ -43,6 +43,9 @@ angular.module('jsonFunc', [])
           });
 
           $scope.selected_func = func;
+          $scope.$watch('selected_func', function() {
+            $scope.column.selected_func = $scope.json_from_hash($scope.selected_func);
+          }, true);
         };
       },
     };
