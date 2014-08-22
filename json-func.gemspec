@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'json-func'
-  s.version     = '0.0.3'
+  s.version     = '0.0.4'
   s.date        = '2014-08-04'
   s.summary     = "Execute function chains stored in json"
   s.description = "Use to execute function chains persisted in json"
