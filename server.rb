@@ -86,7 +86,7 @@ end
 
 get '/' do
   handler = ExampleHandler.new
-  valid_functions = MethodDescriptions.for(handler)
+  valid_functions = handler.class.method_descriptions
   haml :index, locals: {
     valid_functions: valid_functions,
     raw_data_columns: [ 'A', 'B', 'C', 'D' ],
@@ -100,7 +100,7 @@ end
 
 get '/2' do
   handler = ExampleHandler.new
-  valid_functions = MethodDescriptions.for(handler)
+  valid_functions = handler.class.method_descriptions
   haml :index2, locals: {
     valid_functions: valid_functions,
     raw_data_columns: [ 'A', 'B', 'C', 'D' ],
