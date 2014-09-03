@@ -13,42 +13,69 @@ class JsonFunc
 
   def execute(json)
     initial_argument = JSON.parse(json)
-    parse_arg(initial_argument)
+    Function.from_array(initial_argument).execute(handler)
   end
 
-  def execute_fuction(arr)
-    raise ZeroFunctionsError.new if arr.size == 0
-    func = arr.first
-
-    raise BadFunctionNameError.new(func) unless valid_function?(func)
-    args = parse_args(arr[1..-1])
-
-    return args if func == LIST_FUNCTION_NAME
-    handler.send(func, *args)
-  end
-
-  def valid_function?(func)
-    valid_functions.include? func
-  end
-
-  def valid_functions
-    @valid_functions ||= (
-      handler.public_methods - Object.new.public_methods + [LIST_FUNCTION_NAME]
-    ).map(&:to_s)
-  end
-
-  def parse_args(args)
-    args.map do |arg|
-      parse_arg(arg)
+  class Value
+    attr_reader :val
+    def initialize(val)
+      @val = val
+    end
+    def execute(handler)
+      val
     end
   end
 
-  def parse_arg(arg)
-    case arg
-    when Array
-      execute_fuction(arg)
-    else
-      arg
+  class Function
+    attr_reader :func_name, :args
+    def initialize(func_name, args=[])
+      @func_name = func_name
+      @args = args
+    end
+
+    def execute(handler)
+      raise BadFunctionNameError.new(func_name) unless valid_function?(func_name, handler)
+      values = args.map do |arg|
+        arg.execute(handler)
+      end
+
+      if func_name == LIST_FUNCTION_NAME
+        values
+      else
+        handler.send(func_name, *values)
+      end
+    end
+
+    def valid_function?(func, handler)
+      valid_functions(handler).include? func
+    end
+
+    def valid_functions(handler)
+      (
+        handler.public_methods - Object.new.public_methods + [LIST_FUNCTION_NAME]
+      ).map(&:to_s)
+    end
+
+    def self.from_array(array)
+      raise ZeroFunctionsError.new if array.size == 0
+      func_name = array.first
+      args = parse_args(array[1..-1])
+      new(func_name, args)
+    end
+
+    def self.parse_args(args)
+      args.map do |arg|
+        parse_arg(arg)
+      end
+    end
+
+    def self.parse_arg(arg)
+      case arg
+      when Array
+        Function.from_array(arg)
+      else
+        Value.new(arg)
+      end
     end
   end
 end
