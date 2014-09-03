@@ -11,6 +11,12 @@ describe JsonFunc do
     func_handler.stub(public_methods: [:first, :second])
   end
 
+  it 'erorrs if no functions are given' do
+    expect{
+      subject.execute('[]')
+    }.to raise_error(JsonFunc::ZeroFunctionsError)
+  end
+
   it 'executes functions with no arguments' do
     func_handler.stub(:first).and_return(first_result)
     expect(

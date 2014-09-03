@@ -5,7 +5,7 @@ class JsonFunc
   class BadFunctionNameError < RuntimeError; end;
   attr_reader(:handler)
 
-  class Function < Array; end;
+  LIST_FUNCTION_NAME = 'list'
 
   def initialize(handler)
     @handler = handler
@@ -16,23 +16,31 @@ class JsonFunc
     parse_arg(initial_argument)
   end
 
-  def execute_fuction(hash)
-    raise ZeroFunctionsError.new(hash.keys) if hash.size == 0
-    func = hash.first
+  def execute_fuction(arr)
+    raise ZeroFunctionsError.new if arr.size == 0
+    func = arr.first
+
     raise BadFunctionNameError.new(func) unless valid_function?(func)
-    args = hash[1..-1].map do |arg|
-      parse_arg(arg)
-    end
-    return args if func == 'list'
+    args = parse_args(arr[1..-1])
+
+    return args if func == LIST_FUNCTION_NAME
     handler.send(func, *args)
   end
 
   def valid_function?(func)
-    valid_function.include? func
+    valid_functions.include? func
   end
 
   def valid_functions
-    (handler.public_methods - Object.new.public_methods + ['list']).map(&:to_s)
+    @valid_functions ||= (
+      handler.public_methods - Object.new.public_methods + [LIST_FUNCTION_NAME]
+    ).map(&:to_s)
+  end
+
+  def parse_args(args)
+    args.map do |arg|
+      parse_arg(arg)
+    end
   end
 
   def parse_arg(arg)
